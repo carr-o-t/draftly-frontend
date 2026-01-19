@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Define protected routes
-    const protectedRoutes = ["/dashboard"];
+    const protectedRoutes = ["/documents"];
 
     // Check if the current path starts with any of the protected routes
     const isProtectedRoute = protectedRoutes.some((route) =>
@@ -23,7 +23,7 @@ export function middleware(request: NextRequest) {
 
     // Optional: Redirect authenticated users away from auth page
     if (pathname === "/auth" && token) {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
+        return NextResponse.redirect(new URL("/documents", request.url));
     }
 
     return NextResponse.next();
