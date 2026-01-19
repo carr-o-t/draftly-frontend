@@ -23,16 +23,30 @@ export async function POST(req: NextRequest) {
         // Extract token and set cookie
         // Backend response: { success: true, data: { token: "...", user: ... } }
         const token = data?.data?.token;
-        console.log("Token:", data);
+        const userEmail = data?.data?.user?.email;
+
+        const cookieStore = await cookies();
 
         if (token) {
-            (await cookies()).set({
+            cookieStore.set({
                 name: "auth_token",
                 value: token,
                 httpOnly: true,
                 path: "/",
                 secure: process.env.NODE_ENV === "production",
                 maxAge: 60 * 60 * 24 * 7, // 1 week
+                sameSite: "lax",
+            });
+        }
+
+        if (userEmail) {
+            cookieStore.set({
+                name: "user_email",
+                value: userEmail,
+                httpOnly: false, // Accessible to client-side JS for display
+                path: "/",
+                secure: process.env.NODE_ENV === "production",
+                maxAge: 60 * 60 * 24 * 7,
                 sameSite: "lax",
             });
         }

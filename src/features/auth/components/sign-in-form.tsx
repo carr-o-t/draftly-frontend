@@ -35,7 +35,7 @@ export const SignInForm = ({ onToggleMode }: SignInFormProps) => {
             onSuccess: () => {
                 // Handle success (e.g., redirect or update user state)
                 console.log("Logged in successfully");
-                router.push("/dashboard");
+                router.push("/documents");
             },
             onError: (error) => {
                 console.error("Login failed:", error);

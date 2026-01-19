@@ -41,7 +41,7 @@ export const SignUpForm = ({ onToggleMode }: SignUpFormProps) => {
             onSuccess: () => {
                 // Handle success
                 console.log("Account created successfully");
-                router.push("/dashboard");
+                router.push("/documents");
             },
             onError: (error) => {
                 console.error("Registration failed:", error);
