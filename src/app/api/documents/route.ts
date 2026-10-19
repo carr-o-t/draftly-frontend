@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-// Common helper for authorized fetch
 async function authorizedFetch(url: string, options: RequestInit = {}) {
   const cookieStore = await cookies();
   const token = cookieStore.get('auth_token')?.value;

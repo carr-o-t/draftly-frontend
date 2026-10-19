@@ -17,7 +17,6 @@ async function authorizedFetch(url: string, options: RequestInit = {}) {
   });
 }
 
-// POST /api/documents/[id]/request-access
 export async function POST(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -25,7 +24,6 @@ export async function POST(
   const { id } = await context.params;
   const body = await request.json();
   try {
-    // Backend endpoint: /v1/documents/:id/request-access
     const response = await authorizedFetch(
       `http://localhost:8080/v1/documents/${id}/request-access`,
       {

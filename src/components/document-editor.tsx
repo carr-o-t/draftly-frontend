@@ -65,7 +65,6 @@ const DocumentEditor = () => {
 
   return (
     <div className="bg-background flex min-h-screen flex-col">
-      {/* header */}
       <header className="border-border bg-background/80 sticky top-0 z-20 border-b backdrop-blur-sm">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
@@ -134,7 +133,7 @@ const DocumentEditor = () => {
         </div>
       </header>
 
-      {/* editor — Yjs is the single source of truth; the server persists updates over the websocket */}
+      {/* editor, yjs is the source of truth and updates go over the websocket */}
       {provider && ydoc && connected ? (
         <TiptapEditor
           documentId={id}
@@ -151,7 +150,6 @@ const DocumentEditor = () => {
         </div>
       )}
 
-      {/* dialogs */}
       {renameOpen && (
         <RenameDocumentModal
           documentId={id || ''}

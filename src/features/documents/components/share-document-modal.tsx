@@ -26,7 +26,6 @@ export function ShareDocumentModal({
   const [email, setEmail] = useState('');
   const [role, setRole] = useState<'viewer' | 'editor'>('viewer');
 
-  // Mutations & Queries
   const { mutate: inviteUsers, isPending: isInviting } =
     useInviteUsers(documentId);
   const { mutate: revokeAccess, isPending: isRevoking } =
@@ -41,14 +40,12 @@ export function ShareDocumentModal({
 
     inviteUsers([{ email, role }], {
       onSuccess: () => {
-        setEmail(''); // Clear input
+        setEmail('');
       },
     });
   };
 
   const handleRevoke = (userId: string) => {
-    // Optimistically delete or just show loading state?
-    // We'll trust the mutation loading state for simplicity or use a toast
     revokeAccess(userId);
   };
 
@@ -66,7 +63,6 @@ export function ShareDocumentModal({
       className="max-w-xl"
     >
       <div className="space-y-6">
-        {/* Invite Section */}
         <div className="flex items-end gap-2">
           <div className="flex-1 space-y-2">
             <input
@@ -101,7 +97,6 @@ export function ShareDocumentModal({
           </button>
         </div>
 
-        {/* Permissions List */}
         <div className="space-y-3">
           <h3 className="text-foreground text-sm font-medium">
             People with access

@@ -17,14 +17,12 @@ async function authorizedFetch(url: string, options: RequestInit = {}) {
   });
 }
 
-// DELETE /api/documents/[id]/share/[userId]
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string; userId: string }> }
 ) {
   const { id, userId } = await context.params;
   try {
-    // Backend endpoint: /v1/documents/:id/share/:userId
     const response = await authorizedFetch(
       `http://localhost:8080/v1/documents/${id}/share/${userId}`,
       {

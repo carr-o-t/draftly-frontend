@@ -32,8 +32,8 @@ export const TiptapEditor = ({
     {
       extensions: [
         StarterKit.configure({
-          // Collaboration already bundles yUndoPlugin for undo/redo.
-          // The v3 option name is `undoRedo`, not `history`.
+          // collab already brings its own undo/redo, the v3 option is
+          // undoRedo not history
           undoRedo: false,
           heading: {
             levels: [1, 2, 3],
@@ -73,7 +73,7 @@ export const TiptapEditor = ({
     }
   }, [editor, readOnly]);
 
-  // Persist a derived HTML snapshot for thumbnails. Yjs stays the source of truth.
+  // save a html snapshot for the thumbnails, yjs stays teh source of truth
   useContentSnapshot({
     documentId,
     editor,

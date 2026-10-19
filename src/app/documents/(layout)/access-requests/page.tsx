@@ -82,11 +82,10 @@ function StatusBadge({ status }: { status: AccessRequest['status'] }) {
       </Badge>
     );
   }
-  return null; // pending has actions
+  return null; // pending rows have actions instead
 }
 
 function RequestItem({ request }: { request: AccessRequest }) {
-  // We need document ID to handle request. Backend response now has it.
   const { mutate: handleRequest, isPending: isHandling } = useHandleRequest(
     request.document_id
   );
@@ -193,7 +192,6 @@ function RequestItem({ request }: { request: AccessRequest }) {
                 size="sm"
                 className="text-destructive hover:bg-destructive/5 border-destructive/20 h-8 gap-1.5"
                 onClick={onRevoke}
-                // disabled
               >
                 <RotateCcw className="h-3 w-3" />
                 Revoke

@@ -21,7 +21,6 @@ export default async function DocumentPage({
       const cookieStore = await cookies();
       const token = cookieStore.get('auth_token')?.value;
 
-      // TODO: use ENV var for backend URL
       const response = await fetch(`http://localhost:8080/v1/documents/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,

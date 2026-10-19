@@ -32,7 +32,7 @@ export interface InviteRequestItem {
 export type InviteUserRequest = InviteRequestItem[];
 
 export interface PendingInviteResponse {
-  invited: Record<string, string>; // or similar based on backend response "invited" map
+  invited: Record<string, string>;
 }
 
 export interface Permission {

@@ -17,8 +17,7 @@ async function authorizedFetch(url: string, options: RequestInit = {}) {
   });
 }
 
-// PATCH /api/documents/[id]/autosave
-// Persists the derived HTML snapshot of the Yjs document (used for thumbnails).
+// saves the html snapshot used for thumbnails
 export async function PATCH(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }

@@ -5,7 +5,6 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // TODO: Add backend URL to env vars
     const response = await fetch(
       'http://localhost:8080/v1/auth/login-or-register',
       {
@@ -23,8 +22,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(data, { status: response.status });
     }
 
-    // Extract token and set cookie
-    // Backend response: { success: true, data: { token: "...", user: ... } }
+    // the backend returns { success, data: { token, user } }
     const token = data?.data?.token;
     const userEmail = data?.data?.user?.email;
 
@@ -57,7 +55,7 @@ export async function POST(req: NextRequest) {
       cookieStore.set({
         name: 'user_email',
         value: userEmail,
-        httpOnly: false, // Accessible to client-side JS for display
+        httpOnly: false, // readable by js for display
         path: '/',
         secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 24 * 7,

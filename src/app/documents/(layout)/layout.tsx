@@ -39,7 +39,6 @@ export default function DashboardLayout({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // editor page needs no sidebar/header
   if (isEditor) {
     return <>{children}</>;
   }

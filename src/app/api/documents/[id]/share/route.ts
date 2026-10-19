@@ -17,8 +17,6 @@ async function authorizedFetch(url: string, options: RequestInit = {}) {
   });
 }
 
-// POST /api/documents/[id]/share (Invite)
-// GET /api/documents/[id]/share (List Permissions)
 export async function POST(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -26,7 +24,6 @@ export async function POST(
   const { id } = await context.params;
   try {
     const body = await request.json();
-    // Backend endpoint: /v1/documents/:id/share
     const response = await authorizedFetch(
       `http://localhost:8080/v1/documents/${id}/share`,
       {
@@ -52,7 +49,6 @@ export async function GET(
 ) {
   const { id } = await context.params;
   try {
-    // Backend endpoint: /v1/documents/:id/share
     const response = await authorizedFetch(
       `http://localhost:8080/v1/documents/${id}/share`
     );

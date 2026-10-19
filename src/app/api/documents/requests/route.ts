@@ -17,11 +17,8 @@ async function authorizedFetch(url: string, options: RequestInit = {}) {
   });
 }
 
-// GET /api/documents/requests (List Requests)
 export async function GET() {
   try {
-    // Backend endpoint: /v1/documents/access/requests (Notice hierarchy change in backend vs frontend proxy)
-    // User requested "apis ... under documents".
     const response = await authorizedFetch(
       `http://localhost:8080/v1/access/requests`
     );

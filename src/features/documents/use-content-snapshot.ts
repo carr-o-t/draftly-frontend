@@ -11,16 +11,16 @@ interface UseContentSnapshotOptions {
   editor: Editor | null;
   ydoc: Y.Doc;
   enabled: boolean;
-  // Last snapshot known to be persisted on the server, used to avoid
-  // redundant writes (and needless `updated_at` bumps) when opening a document.
+  // last snapshot we kno is saved on the server, so we dont write the
+  // same thing again when the doc opens
   initialContent?: string;
 }
 
 const DEBOUNCE_MS = 1500;
 
-// Pushes a derived HTML snapshot of the Yjs document to the REST endpoint.
-// Yjs remains the single source of truth; `documents.content` is only ever
-// written from here (one-directional Yjs -> snapshot) and read for thumbnails.
+// pushes a html snapshot of the yjs doc to the rest endpoint.
+// yjs is the source of truth, documents.content is only writen from here
+// and is only read for thumbnails.
 export const useContentSnapshot = ({
   documentId,
   editor,
@@ -55,7 +55,7 @@ export const useContentSnapshot = ({
           }
         })
         .catch(() => {
-          // Allow a later update or flush to retry.
+          // let a later update or flush retry
           lastPushedRef.current = '';
         });
     };

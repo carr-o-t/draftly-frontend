@@ -12,7 +12,7 @@ export const useSignOut = () => {
         method: 'POST',
       });
       router.push('/auth');
-      router.refresh(); // Ensure server components re-run to see cleared cookies
+      router.refresh(); // make the server components re-run so they see the cleared cookies
     } catch (error) {
       console.error('Failed to sign out:', error);
     } finally {

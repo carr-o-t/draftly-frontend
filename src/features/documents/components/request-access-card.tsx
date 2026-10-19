@@ -74,12 +74,6 @@ export function RequestAccessCard({ documentId }: RequestAccessCardProps) {
           </p>
         </div>
 
-        {/* <div className="bg-muted/30 rounded-lg p-4 mb-6 flex items-center justify-center gap-2 border border-border/50">
-                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Document</span>
-                    <div className="w-px h-4 bg-border" />
-                    <span className="font-medium text-foreground truncate max-w-[200px]">{documentId}</span>
-                </div> */}
-
         <div className="mb-6 space-y-3">
           <label className="text-foreground text-sm font-medium">
             Request access as

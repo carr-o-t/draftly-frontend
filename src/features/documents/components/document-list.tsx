@@ -38,14 +38,10 @@ export function DocumentList() {
     );
   }
 
-  // Combine my documents and shared documents for now, or just show my documents
-  // The design shows "My Documents" section.
-  // Let's filter based on search query
-
   const myDocuments = data?.data?.my_documents || [];
   const sharedDocuments = data?.data?.shared_with_me || [];
 
-  // Simple client-side search
+  // basic client side search
   const filteredMyDocs = myDocuments.filter((doc) =>
     doc.title.toLowerCase().includes(searchQuery.toLowerCase())
   );

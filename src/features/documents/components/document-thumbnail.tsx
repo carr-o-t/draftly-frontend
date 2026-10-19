@@ -11,13 +11,8 @@ export function DocumentThumbnail({
   content,
   className,
 }: DocumentThumbnailProps) {
-  // Basic sanitization/safeguard: if content is empty, show placeholder
+  // if there is no content show a placeholder
   const isEmpty = !content || content === '<p></p>';
-
-  // We scale down a 800px wide "virtual" page to fit container
-  // Assuming container is roughly ~300px wide, scale ~0.4
-  // But better to use container queries or just fixed usage.
-  // For a card thumbnail of h-32 (128px), lets target a view.
 
   return (
     <div
@@ -43,7 +38,6 @@ export function DocumentThumbnail({
         </div>
       )}
 
-      {/* Overlay to ensure it's not interactive and adds a subtle depth feeling */}
       <div className="absolute inset-0 bg-stone-900/2" />
     </div>
   );

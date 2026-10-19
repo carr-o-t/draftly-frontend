@@ -33,8 +33,6 @@ export const SignInForm = ({ onToggleMode }: SignInFormProps) => {
   const onSubmit = (data: SignInValues) => {
     login(data, {
       onSuccess: () => {
-        // Handle success (e.g., redirect or update user state)
-        console.log('Logged in successfully');
         router.push('/documents');
       },
       onError: (error) => {

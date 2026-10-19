@@ -43,8 +43,6 @@ export const SignUpForm = ({ onToggleMode }: SignUpFormProps) => {
   const onSubmit = (data: SignUpValues) => {
     loginOrRegister(data, {
       onSuccess: () => {
-        // Handle success
-        console.log('Account created successfully');
         router.push('/documents');
       },
       onError: (error) => {

@@ -5,23 +5,19 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('auth_token')?.value;
   const { pathname } = request.nextUrl;
 
-  // Define protected routes
   const protectedRoutes = ['/documents'];
 
-  // Check if the current path starts with any of the protected routes
   const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route)
   );
 
   if (isProtectedRoute && !token) {
-    // Redirect to login page if trying to access protected route without token
+    // no token, send them to the login page
     const loginUrl = new URL('/auth', request.url);
-    // TODO: Add redirect param to return after login
-    // loginUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Optional: Redirect authenticated users away from auth page
+  // already logged in, keep them out of the auth page
   if (pathname === '/auth' && token) {
     return NextResponse.redirect(new URL('/documents', request.url));
   }

@@ -79,14 +79,12 @@ export function DocumentCard({ docData }: DocumentCardProps) {
         onClick={handleOpenDocument}
         className="group bg-card hover:border-primary/50 relative flex max-w-[240px] cursor-pointer flex-col justify-between overflow-hidden rounded-xl border p-0 shadow-sm transition-all hover:shadow-md"
       >
-        {/* Thumbnail */}
         <div className="bg-muted/10 relative aspect-3/4 h-64 border-b">
           <DocumentThumbnail
             content={docData.content}
             className="h-full w-full"
           />
 
-          {/* Badge for "Shared" */}
           {docData.role !== 'owner' && (
             <Badge
               variant="default"
@@ -99,7 +97,6 @@ export function DocumentCard({ docData }: DocumentCardProps) {
 
         <div className="flex items-center justify-between gap-3 p-3">
           <div className="flex items-center gap-3 overflow-hidden">
-            {/* Doc Icon Placeholder - akin to the blue 'W' */}
             <div className="text-success flex h-8 w-8 shrink-0 items-center justify-center rounded">
               <FileText className="h-5 w-5" />
             </div>

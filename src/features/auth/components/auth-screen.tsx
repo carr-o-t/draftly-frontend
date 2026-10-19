@@ -14,9 +14,7 @@ export const AuthScreen = () => {
 
   return (
     <div className="bg-background text-foreground flex min-h-screen w-full">
-      {/* Left Side - Branding & Features */}
       <div className="dark:from-sidebar-primary/10 dark:to-sidebar-primary/5 relative hidden w-1/2 flex-col justify-center overflow-hidden bg-gradient-to-br from-green-50 to-green-100 p-12 lg:flex lg:p-20">
-        {/* Radial gradient background effect */}
         <div className="bg-primary/20 absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-50 blur-3xl" />
 
         <div className="relative z-10 max-w-lg">
@@ -57,7 +55,6 @@ export const AuthScreen = () => {
         </div>
       </div>
 
-      {/* Right Side - Auth Form */}
       <div className="bg-background flex flex-1 items-center justify-center p-8">
         {mode === 'signIn' ? (
           <SignInForm onToggleMode={toggleMode} />

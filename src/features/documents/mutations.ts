@@ -105,7 +105,7 @@ export const useRequestAccess = (id: string) => {
       });
       if (!response.ok) {
         const body = await response.json().catch(() => null);
-        // An already-pending request is not an error for the user.
+        // a pending request is not a real error for the user
         if (
           response.status === 409 &&
           body?.message === 'request already pending'

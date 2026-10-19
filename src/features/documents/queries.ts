@@ -45,8 +45,6 @@ export const useDocument = (id: string) => {
       const response = await fetch(`/api/documents/${id}`);
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        console.log('QUERY RES :::', data);
-        console.log('status ::: ', response.status);
         throw new ApiError(
           data.message || 'Failed to fetch document',
           response.status
@@ -56,7 +54,6 @@ export const useDocument = (id: string) => {
     },
     enabled: !!id,
     retry: (failureCount, error) => {
-      // console.log("QUERY RES :::", error)
       if (error instanceof ApiError && error.status === 403) return false;
       return failureCount < 3;
     },

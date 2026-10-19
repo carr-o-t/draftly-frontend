@@ -24,7 +24,7 @@ export function RenameDocumentModal({
   const handleSave = () => {
     if (!title.trim()) return;
 
-    // Optimistic check: if no change, just close
+    // nothing changed, just close
     if (title === currentTitle) {
       onClose();
       return;

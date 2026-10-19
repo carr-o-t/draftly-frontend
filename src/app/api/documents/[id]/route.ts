@@ -17,11 +17,6 @@ async function authorizedFetch(url: string, options: RequestInit = {}) {
   });
 }
 
-// Params type for dynamic route
-// Correct Next.js 13+ app directory pattern:
-// { params } argument is passed as second argument to route handlers
-// { params }: { params: { id: string } }
-
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
