@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useDocuments } from "../queries";
 import { DocumentCard } from "./document-card";
 import { Loader2, FilePlus } from "lucide-react";
+import { useCreateDocument } from "../mutations";
 
 interface DocumentListProps {
 }
@@ -13,6 +14,11 @@ export function DocumentList({ }: DocumentListProps) {
     const searchQuery = searchParams.get("search") || "";
 
     const { data, isLoading, isError, error } = useDocuments();
+        const { mutate: createDocument, isPending } = useCreateDocument();
+    
+        const handleCreateDocument = () => {
+            createDocument({ title: "Untitled Document" });
+        };
 
     if (isLoading) {
         return (
@@ -68,8 +74,9 @@ export function DocumentList({ }: DocumentListProps) {
                     <h3 className="text-lg font-semibold">No documents yet</h3>
                     <p className="text-sm text-muted-foreground">Create your first document to get started</p>
                 </div>
-                <button className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90">
-                    <FilePlus className="h-4 w-4" />
+                <button onClick={handleCreateDocument}
+                    disabled={isPending} className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 disabled:opacity-50">
+                    {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <FilePlus className="h-4 w-4" />}
                     Create Document
                 </button>
             </div>
