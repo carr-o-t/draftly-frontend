@@ -44,7 +44,7 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="bg-muted/40 hidden h-screen w-64 flex-col border-r md:flex">
+    <aside className="bg-muted hidden h-screen w-64 flex-col border-r md:flex">
       <div className="flex h-14 items-center border-b px-6 lg:h-[60px]">
         <Link href="/" className="flex items-center gap-2 font-semibold">
           <LayoutDashboard className="h-6 w-6" />
@@ -114,10 +114,8 @@ export function Sidebar() {
             </Link>
           </div>
           <p className="text-muted-foreground text-xs">
-            A portfolio project by{' '}
-            <span className="text-foreground font-semibold">
-              {DEVELOPER_NAME}
-            </span>
+            A project by{' '}
+            <span className="text-primary font-semibold">{DEVELOPER_NAME}</span>
           </p>
         </div>
       </div>

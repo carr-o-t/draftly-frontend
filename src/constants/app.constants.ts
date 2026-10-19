@@ -1,4 +1,4 @@
-export const APP_NAME = 'DocSpace';
+export const APP_NAME = 'Draftly';
 export const DEVELOPER_NAME = 'ByteTheCarrot.dev';
 
 export const SOCIAL_LINKS = {

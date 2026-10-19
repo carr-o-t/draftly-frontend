@@ -22,7 +22,7 @@ export const AuthScreen = () => {
             <div className="bg-primary rounded-lg p-2">
               <FileText className="text-primary-foreground h-6 w-6" />
             </div>
-            <span className="text-xl font-bold tracking-tight">DocFlow</span>
+            <span className="text-xl font-bold tracking-tight">Draftly</span>
           </div>
 
           <h1 className="text-foreground mb-6 text-5xl leading-[1.15] font-extrabold tracking-tight">
@@ -38,7 +38,7 @@ export const AuthScreen = () => {
             real-time. Simple, secure, and beautifully designed.
           </p>
 
-          <div className="flex gap-4">
+          {/* <div className="flex gap-4">
             <div className="border-border/50 text-foreground flex items-center gap-2 rounded-full border bg-white/60 px-4 py-2 text-sm font-medium shadow-sm backdrop-blur-sm dark:bg-black/20">
               <FileText className="text-primary h-4 w-4" />
               Real-time editing
@@ -51,7 +51,7 @@ export const AuthScreen = () => {
               <Shield className="text-primary h-4 w-4" />
               Access control
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
