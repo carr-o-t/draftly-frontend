@@ -86,13 +86,13 @@ export const SignInForm = ({ onToggleMode }: SignInFormProps) => {
               >
                 Password
               </label>
-              <button
+              {/* <button
                 type="button"
                 className="text-primary text-sm hover:underline"
                 onClick={() => {}}
               >
                 Forgot password?
-              </button>
+              </button> */}
             </div>
 
             <div className="relative">
