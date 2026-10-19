@@ -1,6 +1,6 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-@plugin "tailwindcss-animate";
+@plugin 'tailwindcss-animate';
 
 @theme {
   --color-background: hsl(var(--background));
@@ -50,7 +50,6 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 }
-
 
 /* Animation delay utilities */
 .animation-delay-100 {
@@ -186,7 +185,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply text-foreground bg-white font-sans antialiased;
     font-family: 'Inter', system-ui, sans-serif;
   }
 }
@@ -197,7 +196,7 @@
   }
 
   .doc-card-hover:hover {
-    @apply bg-[hsl(var(--doc-card-hover))] shadow-sm -translate-y-0.5;
+    @apply -translate-y-0.5 bg-[hsl(var(--doc-card-hover))] shadow-sm;
   }
 
   .animate-fade-in {
@@ -209,11 +208,13 @@
   }
 
   .thumbnail-lines {
-    background-image: repeating-linear-gradient(0deg,
-        transparent,
-        transparent 8px,
-        hsl(var(--thumbnail-lines)) 8px,
-        hsl(var(--thumbnail-lines)) 10px);
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 8px,
+      hsl(var(--thumbnail-lines)) 8px,
+      hsl(var(--thumbnail-lines)) 10px
+    );
   }
 }
 
@@ -237,4 +238,30 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+/* Collaboration Cursor */
+.collaboration-cursor__caret {
+  border-left: 1px solid #0d0d0d;
+  border-right: 1px solid #0d0d0d;
+  margin-left: -1px;
+  margin-right: -1px;
+  pointer-events: none;
+  position: relative;
+  word-break: normal;
+}
+
+/* Render the cursor label */
+.collaboration-cursor__label {
+  border-radius: 3px 3px 3px 0;
+  color: #fff;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  left: -1px;
+  line-height: normal;
+  padding: 0.1rem 0.3rem;
+  position: absolute;
+  top: -1.4em;
+  user-select: none;
+  white-space: nowrap;
 }

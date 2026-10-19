@@ -6,14 +6,14 @@ import { queryClient } from '@/lib/react-query';
 import { ReactNode } from 'react';
 
 interface QueryProviderProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
 export function QueryProvider({ children }: QueryProviderProps) {
-    return (
-        <QueryClientProvider client={queryClient}>
-            {children}
-            <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
-    );
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
 }

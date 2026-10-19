@@ -1,10 +1,12 @@
-"use client";
+'use client';
 
-import { DocumentList } from "@/features/documents/components/document-list";
+import { Suspense } from 'react';
+import { DocumentList } from '@/features/documents/components/document-list';
 
 export default function DashboardPage() {
-    return (
-        <DocumentList />
-    );
+  return (
+    <Suspense fallback={null}>
+      <DocumentList />
+    </Suspense>
+  );
 }
-
