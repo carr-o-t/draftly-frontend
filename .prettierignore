@@ -1,0 +1,18 @@
+# dependencies
+node_modules
+
+# build output
+.next
+out
+build
+coverage
+
+# generated
+next-env.d.ts
+*.tsbuildinfo
+
+# lockfiles
+package-lock.json
+
+# misc
+.DS_Store
