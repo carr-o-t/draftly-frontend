@@ -15,7 +15,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     const profileRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        // Simple cookie parser to find user_email
+        // cookie parser to find user_email
         const getCookie = (name: string) => {
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);

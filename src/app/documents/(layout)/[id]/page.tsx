@@ -13,8 +13,7 @@ export default async function DocumentPage({ params }: { params: Promise<{ id: s
             const cookieStore = await cookies();
             const token = cookieStore.get("auth_token")?.value;
 
-            // Fetch directly from backend to avoid Next.js API loop and for better perf
-            // Note: Ideally use ENV var for backend URL
+            // TODO: use ENV var for backend URL
             const response = await fetch(`http://localhost:8080/v1/documents/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -22,9 +21,6 @@ export default async function DocumentPage({ params }: { params: Promise<{ id: s
             });
 
             if (!response.ok) {
-                // Return null or handle error freely, generic placeholder for now
-                // We won't throw because we want the client to perhaps try or show error state
-                // But for prefetch, throwing means it just won't be in cache.
                 throw new Error("Failed to fetch document");
             }
 

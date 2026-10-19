@@ -103,7 +103,14 @@ export const useRequestAccess = (id: string) => {
                 method: "POST",
                 body: JSON.stringify(data),
             });
-            if (!response.ok) throw new Error("Failed to request access");
+            if (!response.ok) {
+                const body = await response.json().catch(() => null);
+                // An already-pending request is not an error for the user.
+                if (response.status === 409 && body?.message === "request already pending") {
+                    return { pending: true };
+                }
+                throw new Error(body?.message || "Failed to request access");
+            }
             return response.json();
         },
     });

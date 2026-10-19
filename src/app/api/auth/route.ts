@@ -37,6 +37,17 @@ export async function POST(req: NextRequest) {
                 maxAge: 60 * 60 * 24 * 7, // 1 week
                 sameSite: "lax",
             });
+
+            // client-readable copy so the browser can pass it to the ws connection
+            cookieStore.set({
+                name: "ws_token",
+                value: token,
+                httpOnly: false,
+                path: "/",
+                secure: process.env.NODE_ENV === "production",
+                maxAge: 60 * 60 * 24 * 7,
+                sameSite: "lax",
+            });
         }
 
         if (userEmail) {

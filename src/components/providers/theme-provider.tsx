@@ -17,7 +17,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         root.classList.add(theme);
     }, [theme]);
 
-    // Prevent hydration mismatch
+    // prevent hydration mismatch
     if (!mounted) {
         return <>{children}</>;
     }

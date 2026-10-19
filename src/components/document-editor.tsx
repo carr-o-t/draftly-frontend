@@ -1,82 +1,48 @@
 "use client"
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Placeholder from "@tiptap/extension-placeholder";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Share2, FileText, Cloud, CloudOff } from "lucide-react";
+import { ArrowLeft, Share2, FileText, Cloud, CloudOff, Loader2, Eye, Lock, CheckCircle2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { EditorToolbar } from "./editor-toolbar";
 import { RenameDocumentModal } from "@/features/documents/components/rename-document-modal";
 import { ShareDocumentModal } from "@/features/documents/components/share-document-modal";
 import { ApiError, useDocument } from "@/features/documents/queries";
-import { useUpdateDocument } from "@/features/documents/mutations";
+import { useUpdateDocument, useRequestAccess } from "@/features/documents/mutations";
 import { RequestAccessCard } from "@/features/documents/components/request-access-card";
+import { useCollaboration } from "@/features/collaboration/use-collaboration";
+import { TiptapEditor } from "./tiptap-editor";
 
 const DocumentEditor = () => {
     const router = useRouter();
     const { id } = useParams<{ id: string }>();
 
     const { data, isLoading, error } = useDocument(id);
+    const { provider, ydoc, userColor, connected } = useCollaboration(id);
 
-    console.log(error, error?.message, error?.status)
-
-
-    // ... existing logic
     const title = useMemo(() => !error && data?.data.title || "Untitled Document", [data, error]);
 
-    // Use ref for title to access latest value in timeout closure without recreating callback
-    const titleRef = useRef(title);
-    useEffect(() => {
-        titleRef.current = title;
-    }, [title]);
+    // viewers can only read; owner/editor can edit
+    const readOnly = data?.data.role === "viewer";
 
     const { mutate: updateDocument } = useUpdateDocument(id);
+    const { mutate: requestEditAccess, isPending: isRequesting, isSuccess: requestSent } = useRequestAccess(id);
 
     const [isSaving, setIsSaving] = useState(false);
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
     const [renameOpen, setRenameOpen] = useState(false);
     const [shareOpen, setShareOpen] = useState(false);
 
+    const titleRef = useRef(title);
+    useEffect(() => {
+        titleRef.current = title;
+    }, [title]);
+
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    const editor = useEditor({
-        extensions: [
-            StarterKit.configure({
-                heading: {
-                    levels: [1, 2, 3],
-                },
-            }),
-            Placeholder.configure({
-                placeholder: "Start typing...",
-            }),
-        ],
-        content: "",
-        immediatelyRender: false,
-        editorProps: {
-            attributes: {
-                class: "prose prose-sm sm:prose-base max-w-none focus:outline-none min-h-[calc(100vh-180px)] px-4 py-6 sm:px-8 sm:py-8",
-            },
-        },
-        onUpdate: ({ editor }) => {
-            debouncedSave(editor.getHTML());
-        },
-    });
-
-    // Load document
-    useEffect(() => {
-        if (id && data && !error) {
-            // Only set content if editor is empty to avoid overwriting user sorting hydration
-            if (editor && editor.isEmpty) {
-                editor.commands.setContent(data.data.content);
-            }
-        }
-    }, [id, editor, data, error]); // Added data dependency to ensure load
-
-    // Debounced save function
+    // debounced save function
     const debouncedSave = useCallback(
         (content: string) => {
+            if (readOnly) return;
             if (timeoutRef.current) {
                 clearTimeout(timeoutRef.current);
             }
@@ -84,7 +50,7 @@ const DocumentEditor = () => {
 
             timeoutRef.current = setTimeout(() => {
                 updateDocument({
-                    title: titleRef.current, // Use ref to get latest title
+                    title: titleRef.current,
                     content
                 }, {
                     onSuccess: () => {
@@ -97,16 +63,20 @@ const DocumentEditor = () => {
                 });
             }, 1000);
         },
-        [updateDocument] // Stable dependency
+        [updateDocument]
     );
 
-
     const handleBack = () => {
-        router.back();
+        // if there's no prior page, go to the dashboard instead of staying stuck
+        if (typeof window !== "undefined" && window.history.length > 1) {
+            router.back();
+        } else {
+            router.replace("/documents");
+        }
     };
 
-    if (isLoading) return <div className="">loading...</div>
-    // If access denied (403), show Request Access API
+    if (isLoading) return <div className="flex items-center justify-center min-h-screen"><Loader2 className="animate-spin" /></div>;
+
     if (error instanceof ApiError && error.status === 403) {
         return <RequestAccessCard documentId={id} />;
     }
@@ -129,16 +99,43 @@ const DocumentEditor = () => {
                         <div className="flex items-center gap-2">
                             <FileText className="h-5 w-5 text-primary shrink-0" />
                             <button
-                                onClick={() => setRenameOpen(true)}
-                                className="text-base sm:text-lg font-medium text-foreground hover:text-primary transition-colors truncate max-w-[200px] sm:max-w-[400px] text-left"
+                                onClick={() => !readOnly && setRenameOpen(true)}
+                                disabled={readOnly}
+                                className="text-base sm:text-lg font-medium text-foreground hover:text-primary transition-colors truncate max-w-[200px] sm:max-w-[400px] text-left disabled:hover:text-foreground disabled:cursor-default"
                             >
                                 {title}
                             </button>
+                            {readOnly && (
+                                <span className="inline-flex items-center gap-1 rounded-full border bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                                    <Eye className="h-3 w-3" />
+                                    Read only
+                                </span>
+                            )}
                         </div>
                     </div>
 
                     <div className="flex items-center gap-2 sm:gap-3">
-                        {/* Save status */}
+                        {readOnly ? (
+                            requestSent ? (
+                                <span className="inline-flex items-center gap-1.5 text-xs font-medium text-success">
+                                    <CheckCircle2 className="h-4 w-4" />
+                                    Request sent
+                                </span>
+                            ) : (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => requestEditAccess({ role: "editor" })}
+                                    disabled={isRequesting}
+                                    className="gap-2"
+                                >
+                                    {isRequesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
+                                    Request Edit Access
+                                </Button>
+                            )
+                        ) : (
+                            <>
+                                {/* save status */}
                         <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground">
                             {isSaving ? (
                                 <>
@@ -162,26 +159,40 @@ const DocumentEditor = () => {
                             <Share2 className="h-4 w-4" />
                             <span className="hidden sm:inline">Share</span>
                         </Button>
+                            </>
+                        )}
                     </div>
                 </div>
             </header>
 
-            {/* Editor */}
-            <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
-                <EditorToolbar editor={editor} />
-
-                <div className="flex-1 bg-card border-x border-border">
-                    <EditorContent editor={editor} />
+            {/* editor */}
+            {provider && ydoc && connected ? (
+                <TiptapEditor
+                    provider={provider}
+                    ydoc={ydoc}
+                    userColor={userColor}
+                    readOnly={readOnly}
+                    onSave={debouncedSave}
+                    setIsSaving={setIsSaving}
+                    setLastSaved={setLastSaved}
+                />
+            ) : (
+                <div className="flex-1 flex items-center justify-center">
+                    <Loader2 className="animate-spin text-muted-foreground" />
+                    <span className="ml-2 text-muted-foreground">Connecting...</span>
                 </div>
-            </div>
+            )}
 
-            {/* Dialogs */}
+
+            {/* dialogs */}
             {renameOpen && <RenameDocumentModal
                 documentId={id || ""}
                 currentTitle={title}
                 isOpen={renameOpen}
                 onClose={() => setRenameOpen(false)}
-                currentContent={editor?.getHTML() || ""}
+                // TODO: get content from editor itself
+                // passing empty string is safe for rename modal usually
+                currentContent=""
             />}
 
             {shareOpen && <ShareDocumentModal

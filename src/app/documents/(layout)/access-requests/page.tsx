@@ -64,7 +64,7 @@ function RequestItem({ request }: { request: AccessRequest }) {
             requestId: request.id,
             data: {
                 action: "approved",
-                role: request.role || "viewer"
+                role: request.role
             }
         });
     };
@@ -90,8 +90,10 @@ function RequestItem({ request }: { request: AccessRequest }) {
         return null; // Pending has actions
     };
 
+    console.log(request)
     const dateLabel = useMemo(() => {
-        const date = new Date(request.created_at);
+        const requestDate = request.created_at?.split(" ")?.[0] || "";
+        const date = new Date(requestDate);
         const now = new Date();
         const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
 

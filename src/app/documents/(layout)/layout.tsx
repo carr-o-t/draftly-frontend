@@ -3,7 +3,8 @@
 import { Sidebar } from "@/components/layout/sidebar";
 import { useSignOut } from "@/features/auth/hooks/use-sign-out";
 import { LogOut } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { SearchInput } from "@/components/ui/search-input";
 
 export default function DashboardLayout({
@@ -11,13 +12,18 @@ export default function DashboardLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const pathname = usePathname();
     const { signOut } = useSignOut();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [userEmail, setUserEmail] = useState<string | null>(null);
     const profileRef = useRef<HTMLDivElement>(null);
 
+    // editor page (/documents/:id) renders full-screen without nav chrome
+    const isEditor = /^\/documents\/[^/]+$/.test(pathname) &&
+        !["shared", "settings", "access-requests"].includes(pathname.split("/").pop() || "");
+
     useEffect(() => {
-        // Simple cookie parser to find user_email
+        // cookie parser to find user_email
         const getCookie = (name: string) => {
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
@@ -35,13 +41,20 @@ export default function DashboardLayout({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    // editor page needs no sidebar/header
+    if (isEditor) {
+        return <>{children}</>;
+    }
+
     return (
         <div className="flex h-screen w-full bg-muted/40">
             <Sidebar />
             <div className="flex flex-col flex-1 overflow-hidden">
                 <header className="flex h-14 items-center gap-4 border-b bg-background px-6 lg:h-[60px]">
                     <div className="w-full flex-1">
-                        <SearchInput />
+                        <Suspense fallback={null}>
+                            <SearchInput />
+                        </Suspense>
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="relative" ref={profileRef}>
