@@ -1,6 +1,6 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-@plugin "tailwindcss-animate";
+@plugin 'tailwindcss-animate';
 
 @theme {
   --color-background: hsl(var(--background));
@@ -50,7 +50,6 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 }
-
 
 /* Animation delay utilities */
 .animation-delay-100 {
@@ -197,7 +196,7 @@
   }
 
   .doc-card-hover:hover {
-    @apply bg-[hsl(var(--doc-card-hover))] shadow-sm -translate-y-0.5;
+    @apply -translate-y-0.5 bg-[hsl(var(--doc-card-hover))] shadow-sm;
   }
 
   .animate-fade-in {
@@ -209,11 +208,13 @@
   }
 
   .thumbnail-lines {
-    background-image: repeating-linear-gradient(0deg,
-        transparent,
-        transparent 8px,
-        hsl(var(--thumbnail-lines)) 8px,
-        hsl(var(--thumbnail-lines)) 10px);
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 8px,
+      hsl(var(--thumbnail-lines)) 8px,
+      hsl(var(--thumbnail-lines)) 10px
+    );
   }
 }
 
@@ -264,4 +265,3 @@
   user-select: none;
   white-space: nowrap;
 }
-
