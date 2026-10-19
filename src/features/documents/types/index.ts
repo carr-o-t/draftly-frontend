@@ -47,7 +47,7 @@ export interface AccessRequest {
     document_id: string;
     doc_title?: string;
     requester_id: string;
-    requester_name?: string;
+    requester_email?: string;
     role?: "viewer" | "editor";
     status: "pending" | "approved" | "rejected";
     created_at: string;

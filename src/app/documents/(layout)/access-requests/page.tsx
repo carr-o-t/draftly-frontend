@@ -113,7 +113,7 @@ function RequestItem({ request }: { request: AccessRequest }) {
                     <h4 className="font-semibold text-base leading-none mb-1">{request.doc_title || "Unknown Document"}</h4>
                     <p className="text-sm text-muted-foreground flex items-center gap-1.5 flex-wrap">
                         <User className="w-3 h-3" />
-                        Request from <span className="font-medium text-foreground">{request.requester_name || "Unknown User"}</span>
+                        Request from <span className="font-medium text-foreground">{request.requester_email || "Unknown User"}</span>
                         <span className="w-1 h-1 rounded-full bg-muted-foreground/40 mx-1" />
                         {dateLabel}
                         {request.role && (
