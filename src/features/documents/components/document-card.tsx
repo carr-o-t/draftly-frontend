@@ -151,7 +151,6 @@ export function DocumentCard({ docData }: DocumentCardProps) {
                 onClose={() => setIsRenameOpen(false)}
                 documentId={docData.id}
                 currentTitle={docData.title}
-                currentContent={docData.content}
             />}
 
             {isShareOpen && <ShareDocumentModal

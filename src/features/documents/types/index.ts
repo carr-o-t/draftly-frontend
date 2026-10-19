@@ -21,7 +21,7 @@ export interface CreateDocumentRequest {
 
 export interface UpdateDocumentRequest {
     title: string;
-    content: string;
+    content?: string;
 }
 
 export interface InviteRequestItem {

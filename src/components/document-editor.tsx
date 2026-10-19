@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Share2, FileText, Cloud, CloudOff, Loader2, Eye, Lock, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Share2, FileText, Loader2, Eye, Lock, CheckCircle2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { RenameDocumentModal } from "@/features/documents/components/rename-document-modal";
 import { ShareDocumentModal } from "@/features/documents/components/share-document-modal";
 import { ApiError, useDocument } from "@/features/documents/queries";
-import { useUpdateDocument, useRequestAccess } from "@/features/documents/mutations";
+import { useRequestAccess } from "@/features/documents/mutations";
 import { RequestAccessCard } from "@/features/documents/components/request-access-card";
 import { useCollaboration } from "@/features/collaboration/use-collaboration";
 import { TiptapEditor } from "./tiptap-editor";
@@ -24,50 +24,12 @@ const DocumentEditor = () => {
     // viewers can only read; owner/editor can edit
     const readOnly = data?.data.role === "viewer";
 
-    const { mutate: updateDocument } = useUpdateDocument(id);
     const { mutate: requestEditAccess, isPending: isRequesting, isSuccess: requestSent } = useRequestAccess(id);
 
-    const [isSaving, setIsSaving] = useState(false);
-    const [lastSaved, setLastSaved] = useState<Date | null>(null);
     const [renameOpen, setRenameOpen] = useState(false);
     const [shareOpen, setShareOpen] = useState(false);
 
-    const titleRef = useRef(title);
-    useEffect(() => {
-        titleRef.current = title;
-    }, [title]);
-
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-    // debounced save function
-    const debouncedSave = useCallback(
-        (content: string) => {
-            if (readOnly) return;
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-            setIsSaving(true);
-
-            timeoutRef.current = setTimeout(() => {
-                updateDocument({
-                    title: titleRef.current,
-                    content
-                }, {
-                    onSuccess: () => {
-                        setIsSaving(false);
-                        setLastSaved(new Date());
-                    },
-                    onError: () => {
-                        setIsSaving(false);
-                    }
-                });
-            }, 1000);
-        },
-        [updateDocument]
-    );
-
     const handleBack = () => {
-        // if there's no prior page, go to the dashboard instead of staying stuck
         if (typeof window !== "undefined" && window.history.length > 1) {
             router.back();
         } else {
@@ -83,7 +45,7 @@ const DocumentEditor = () => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col">
-            {/* Header */}
+            {/* header */}
             <header className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-20">
                 <div className="flex items-center justify-between px-4 py-3">
                     <div className="flex items-center gap-3">
@@ -134,47 +96,29 @@ const DocumentEditor = () => {
                                 </Button>
                             )
                         ) : (
-                            <>
-                                {/* save status */}
-                        <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground">
-                            {isSaving ? (
-                                <>
-                                    <CloudOff className="h-3.5 w-3.5" />
-                                    <span>Saving...</span>
-                                </>
-                            ) : lastSaved ? (
-                                <>
-                                    <Cloud className="h-3.5 w-3.5 text-success" />
-                                    <span>Saved</span>
-                                </>
-                            ) : null}
-                        </div>
-
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setShareOpen(true)}
-                            className="gap-2"
-                        >
-                            <Share2 className="h-4 w-4" />
-                            <span className="hidden sm:inline">Share</span>
-                        </Button>
-                            </>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setShareOpen(true)}
+                                className="gap-2"
+                            >
+                                <Share2 className="h-4 w-4" />
+                                <span className="hidden sm:inline">Share</span>
+                            </Button>
                         )}
                     </div>
                 </div>
             </header>
 
-            {/* editor */}
+            {/* editor — Yjs is the single source of truth; the server persists updates over the websocket */}
             {provider && ydoc && connected ? (
                 <TiptapEditor
+                    documentId={id}
                     provider={provider}
                     ydoc={ydoc}
                     userColor={userColor}
                     readOnly={readOnly}
-                    onSave={debouncedSave}
-                    setIsSaving={setIsSaving}
-                    setLastSaved={setLastSaved}
+                    initialContent={data?.data.content}
                 />
             ) : (
                 <div className="flex-1 flex items-center justify-center">
@@ -183,16 +127,12 @@ const DocumentEditor = () => {
                 </div>
             )}
 
-
             {/* dialogs */}
             {renameOpen && <RenameDocumentModal
                 documentId={id || ""}
                 currentTitle={title}
                 isOpen={renameOpen}
                 onClose={() => setRenameOpen(false)}
-                // TODO: get content from editor itself
-                // passing empty string is safe for rename modal usually
-                currentContent=""
             />}
 
             {shareOpen && <ShareDocumentModal

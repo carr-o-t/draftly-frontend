@@ -7,37 +7,38 @@ import Collaboration from "@tiptap/extension-collaboration";
 import { useEffect } from "react";
 import { EditorToolbar } from "./editor-toolbar";
 import { CollaborationCursorV3 } from "@/features/collaboration/collab-cursor";
+import { useContentSnapshot } from "@/features/documents/use-content-snapshot";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 
 interface TiptapEditorProps {
+    documentId: string;
     provider: WebsocketProvider;
     ydoc: Y.Doc;
     userColor: string;
     readOnly: boolean;
-    onSave: (content: string) => void;
-    setIsSaving: (saving: boolean) => void;
-    setLastSaved: (date: Date) => void;
+    initialContent?: string;
 }
 
 export const TiptapEditor = ({
+    documentId,
     provider,
     ydoc,
     userColor,
     readOnly,
-    onSave,
-    setIsSaving,
-    setLastSaved
+    initialContent,
 }: TiptapEditorProps) => {
 
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
-                history: false, // collaboration will handle history
+                // Collaboration already bundles yUndoPlugin for undo/redo.
+                // The v3 option name is `undoRedo`, not `history`.
+                undoRedo: false,
                 heading: {
                     levels: [1, 2, 3],
                 },
-            } as any),
+            }),
             Placeholder.configure({
                 placeholder: readOnly ? "This document is read-only" : "Start typing...",
             }),
@@ -58,19 +59,23 @@ export const TiptapEditor = ({
                 class: "prose prose-sm sm:prose-base max-w-none focus:outline-none min-h-[calc(100vh-180px)] px-4 py-6 sm:px-8 sm:py-8",
             },
         },
-        onUpdate: ({ editor }) => {
-            if (!readOnly) {
-                onSave(editor.getHTML());
-            }
-        },
         immediatelyRender: false,
-    }, []); 
+    }, []);
 
     useEffect(() => {
         if (editor) {
             editor.setEditable(!readOnly);
         }
     }, [editor, readOnly]);
+
+    // Persist a derived HTML snapshot for thumbnails. Yjs stays the source of truth.
+    useContentSnapshot({
+        documentId,
+        editor,
+        ydoc,
+        enabled: !readOnly,
+        initialContent,
+    });
 
     return (
         <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">

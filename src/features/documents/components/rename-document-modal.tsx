@@ -10,10 +10,9 @@ interface RenameDocumentModalProps {
     onClose: () => void;
     documentId: string;
     currentTitle: string;
-    currentContent: string;
 }
 
-export function RenameDocumentModal({ isOpen, onClose, documentId, currentTitle, currentContent }: RenameDocumentModalProps) {
+export function RenameDocumentModal({ isOpen, onClose, documentId, currentTitle }: RenameDocumentModalProps) {
     const [title, setTitle] = useState(currentTitle);
     const { mutate: updateDocument, isPending } = useUpdateDocument(documentId);
 
@@ -31,7 +30,7 @@ export function RenameDocumentModal({ isOpen, onClose, documentId, currentTitle,
             return;
         }
 
-        updateDocument({ title, content: currentContent }, {
+        updateDocument({ title }, {
             onSuccess: () => {
                 onClose();
             }
