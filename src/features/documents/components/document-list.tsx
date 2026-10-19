@@ -19,9 +19,12 @@ export function DocumentList() {
 
   if (isLoading) {
     return (
-      <div className="grid animate-pulse grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid animate-pulse grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
         {[...Array(8)].map((_, i) => (
-          <div key={i} className="bg-muted/30 h-64 rounded-xl border"></div>
+          <div
+            key={i}
+            className="bg-muted/30 h-16 rounded-lg border sm:h-64 sm:rounded-xl"
+          ></div>
         ))}
       </div>
     );
@@ -102,7 +105,7 @@ export function DocumentList() {
               {filteredMyDocs.length} documents
             </span>
           </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
             {filteredMyDocs.map((doc) => (
               <DocumentCard key={doc.id} docData={doc} />
             ))}
@@ -120,7 +123,7 @@ export function DocumentList() {
               {filteredSharedDocs.length} documents
             </span>
           </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
             {filteredSharedDocs.map((doc) => (
               <DocumentCard key={doc.id} docData={doc} />
             ))}
