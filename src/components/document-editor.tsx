@@ -14,7 +14,8 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import { RenameDocumentModal } from '@/features/documents/components/rename-document-modal';
 import { ShareDocumentModal } from '@/features/documents/components/share-document-modal';
-import { ApiError, useDocument } from '@/features/documents/queries';
+import { ApiError } from '@/lib/api';
+import { useDocument } from '@/features/documents/queries';
 import { useRequestAccess } from '@/features/documents/mutations';
 import { RequestAccessCard } from '@/features/documents/components/request-access-card';
 import { useCollaboration } from '@/features/collaboration/use-collaboration';

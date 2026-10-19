@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { apiRequest, ApiError } from '@/lib/api';
 import {
   DocumentListResponse,
   Document,
@@ -19,43 +20,23 @@ export const documentKeys = {
 export const useDocuments = () => {
   return useQuery({
     queryKey: documentKeys.lists(),
-    queryFn: async (): Promise<DocumentListResponse> => {
-      const response = await fetch('/api/documents');
-      if (!response.ok) throw new Error('Failed to fetch documents');
-      return response.json();
-    },
+    queryFn: () => apiRequest<DocumentListResponse>('/api/documents'),
   });
 };
 
-export class ApiError extends Error {
-  constructor(
-    public message: string,
-    public status: number
-  ) {
-    super(message);
-    this.name = 'ApiError';
-    this.status = status;
-  }
-}
-
 export const useDocument = (id: string) => {
-  return useQuery<{ success: boolean; data: Document }, ApiError>({
+  return useQuery({
     queryKey: documentKeys.detail(id),
-    queryFn: async (): Promise<{ success: boolean; data: Document }> => {
-      const response = await fetch(`/api/documents/${id}`);
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new ApiError(
-          data.message || 'Failed to fetch document',
-          response.status
-        );
-      }
-      return response.json();
-    },
+    queryFn: () =>
+      apiRequest<{ success: boolean; data: Document }>(`/api/documents/${id}`),
     enabled: !!id,
     retry: (failureCount, error) => {
       if (error instanceof ApiError && error.status === 403) return false;
       return failureCount < 3;
+    },
+    // the editor shows a dedicated request-access card on 403, no toast needed
+    meta: {
+      skipToast: (error) => error instanceof ApiError && error.status === 403,
     },
   });
 };
@@ -63,11 +44,10 @@ export const useDocument = (id: string) => {
 export const useDocumentPermissions = (id: string) => {
   return useQuery({
     queryKey: documentKeys.permissions(id),
-    queryFn: async (): Promise<{ success: boolean; data: Permission[] }> => {
-      const response = await fetch(`/api/documents/${id}/share`);
-      if (!response.ok) throw new Error('Failed to fetch permissions');
-      return response.json();
-    },
+    queryFn: () =>
+      apiRequest<{ success: boolean; data: Permission[] }>(
+        `/api/documents/${id}/share`
+      ),
     enabled: !!id,
   });
 };
@@ -75,13 +55,10 @@ export const useDocumentPermissions = (id: string) => {
 export const useAccessRequests = () => {
   return useQuery({
     queryKey: documentKeys.requests(),
-    queryFn: async (): Promise<{
-      success: boolean;
-      data: { sent: AccessRequest[]; received: AccessRequest[] };
-    }> => {
-      const response = await fetch(`/api/documents/requests`);
-      if (!response.ok) throw new Error('Failed to fetch access requests');
-      return response.json();
-    },
+    queryFn: () =>
+      apiRequest<{
+        success: boolean;
+        data: { sent: AccessRequest[]; received: AccessRequest[] };
+      }>('/api/documents/requests'),
   });
 };
