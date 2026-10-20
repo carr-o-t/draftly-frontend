@@ -5,10 +5,10 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get('auth_token')?.value;
   const { pathname } = request.nextUrl;
 
-  const protectedRoutes = ['/documents'];
+  const protectedRoutes = ['/', '/documents'];
 
   const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
+    route === '/' ? pathname === '/' : pathname.startsWith(route)
   );
 
   if (isProtectedRoute && !token) {
@@ -17,8 +17,8 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // already logged in, keep them out of the auth page
-  if (pathname === '/auth' && token) {
+  // logged in users never see the landing or auth page, send them to their docs
+  if ((pathname === '/' || pathname === '/auth') && token) {
     return NextResponse.redirect(new URL('/documents', request.url));
   }
 
