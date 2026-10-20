@@ -21,6 +21,8 @@ The whole point is the editor: two people open the same doc and see each other t
 
 <!-- > TODO: Live demo link -->
 
+Live link: [Draftly Frontend](https://draftly.bytethecarrot.dev/)
+
 Here are screenshots of the flow.
 
 **Login**
