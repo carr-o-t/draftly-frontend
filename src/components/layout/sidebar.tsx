@@ -115,7 +115,15 @@ export function Sidebar() {
           </div>
           <p className="text-muted-foreground text-xs">
             A project by{' '}
-            <span className="text-primary font-semibold">{DEVELOPER_NAME}</span>
+            <Link
+              href={SOCIAL_LINKS.PORTFOLIO}
+              target="_blank"
+              className="cursor-pointer transition-colors hover:underline hover:underline-offset-1"
+            >
+              <span className="text-primary font-semibold">
+                {DEVELOPER_NAME}
+              </span>
+            </Link>
           </p>
         </div>
       </div>
