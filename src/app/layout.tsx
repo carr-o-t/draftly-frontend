@@ -4,6 +4,7 @@ import './globals.css';
 
 import { QueryProvider } from '@/components/providers/query-provider';
 import { ThemeProvider } from '@/components/providers/theme-provider';
+import { NetlifyBadgeRemover } from '@/components/netlify-badge-remover';
 import { Toaster } from '@/components/ui/toaster';
 import { APP_NAME } from '@/constants/app.constants';
 
@@ -48,6 +49,7 @@ export default function RootLayout({
         <QueryProvider>
           <ThemeProvider>{children}</ThemeProvider>
           <Toaster />
+          <NetlifyBadgeRemover />
         </QueryProvider>
       </body>
     </html>
