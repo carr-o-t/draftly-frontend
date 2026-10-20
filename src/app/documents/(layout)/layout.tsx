@@ -2,6 +2,7 @@
 
 import { Sidebar } from '@/components/layout/sidebar';
 import { MobileNav } from '@/components/layout/mobile-nav';
+import { MobileFooter } from '@/components/layout/mobile-footer';
 import { ProfileMenu } from '@/components/layout/profile-menu';
 import { usePathname } from 'next/navigation';
 import { Suspense } from 'react';
@@ -26,7 +27,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="bg-muted/40 flex h-screen w-full">
+    <div className="bg-background flex h-screen w-full">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="bg-background flex h-14 items-center gap-4 border-b px-6 lg:h-[60px]">
@@ -50,6 +51,7 @@ export default function DashboardLayout({
         </header>
         <main className="flex-1 overflow-y-auto scroll-smooth p-6 pb-24 md:pb-6">
           {children}
+          <MobileFooter />
         </main>
       </div>
       <MobileNav />
