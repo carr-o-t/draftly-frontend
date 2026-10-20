@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { backendUrl } from '@/lib/backend';
 
 async function authorizedFetch(url: string, options: RequestInit = {}) {
   const cookieStore = await cookies();
@@ -24,7 +25,7 @@ export async function DELETE(
   const { id, userId } = await context.params;
   try {
     const response = await authorizedFetch(
-      `http://localhost:8080/v1/documents/${id}/share/${userId}`,
+      backendUrl(`/documents/${id}/share/${userId}`),
       {
         method: 'DELETE',
       }

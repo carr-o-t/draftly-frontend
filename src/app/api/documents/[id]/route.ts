@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { backendUrl } from '@/lib/backend';
 
 async function authorizedFetch(url: string, options: RequestInit = {}) {
   const cookieStore = await cookies();
@@ -23,9 +24,7 @@ export async function GET(
 ) {
   const { id } = await context.params;
   try {
-    const response = await authorizedFetch(
-      `http://localhost:8080/v1/documents/${id}`
-    );
+    const response = await authorizedFetch(backendUrl(`/documents/${id}`));
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
@@ -45,13 +44,10 @@ export async function PATCH(
   const { id } = await context.params;
   try {
     const body = await request.json();
-    const response = await authorizedFetch(
-      `http://localhost:8080/v1/documents/${id}`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify(body),
-      }
-    );
+    const response = await authorizedFetch(backendUrl(`/documents/${id}`), {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    });
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
@@ -70,12 +66,9 @@ export async function DELETE(
 ) {
   const { id } = await context.params;
   try {
-    const response = await authorizedFetch(
-      `http://localhost:8080/v1/documents/${id}`,
-      {
-        method: 'DELETE',
-      }
-    );
+    const response = await authorizedFetch(backendUrl(`/documents/${id}`), {
+      method: 'DELETE',
+    });
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {

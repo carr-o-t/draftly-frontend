@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { backendUrl } from '@/lib/backend';
 
 async function authorizedFetch(url: string, options: RequestInit = {}) {
   const cookieStore = await cookies();
@@ -25,7 +26,7 @@ export async function POST(
   try {
     const body = await request.json();
     const response = await authorizedFetch(
-      `http://localhost:8080/v1/documents/${id}/share`,
+      backendUrl(`/documents/${id}/share`),
       {
         method: 'POST',
         body: JSON.stringify(body),
@@ -50,7 +51,7 @@ export async function GET(
   const { id } = await context.params;
   try {
     const response = await authorizedFetch(
-      `http://localhost:8080/v1/documents/${id}/share`
+      backendUrl(`/documents/${id}/share`)
     );
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
