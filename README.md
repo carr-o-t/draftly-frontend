@@ -272,8 +272,15 @@ get committed.
 - Deploys fine on Vercel, since the socket is handled by the backend, not Next.
 - Never commit the real `.env`. `.env.example` is the template, the real file is ignored.
 
+Heads up on the Render free tier (our backend runs there): the service sleeps after ~15
+minutes with no traffic. The next request wakes it up and that first one can take 30-60
+seconds. So the first page load or action after a quiet spell feels frozen, then it's fine.
+You'll notice it most when opening a doc for the first time in a while.
+
 ## Known limitations
 
+- The backend is on the Render free tier, so it sleeps when idle. The first request after a
+  quiet spell is slow (cold start) while the server wakes up.
 - The "shared with me" list always shows the role as viewer, we don't fetch the
   real role there yet.
 - Role changes mid-session don't reach an open tab. A revoked or downgraded user
@@ -288,6 +295,7 @@ get committed.
 
 ## Roadmap
 
+- Move the backend off the free tier (or warm it) so requests stay fast.
 - Show the real role in the shared list.
 - React to role changes on open sockets (close or re-role them live).
 - Swap `ws_token` for a short-lived, one-use ticket.
