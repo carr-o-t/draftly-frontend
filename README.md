@@ -82,6 +82,11 @@ Why the proxy? The auth token is stored in an HttpOnly cookie, so the browser
 can't read it. The Next route handlers read the cookie on the server and add the
 `Authorization` header for us.
 
+One honest caveat: the socket can't use that HttpOnly cookie, so we also set a
+second `ws_token` cookie that JavaScript can read, and pass it as `?token=...` on
+the ws url. So the token isn't fully out of JavaScript's reach. See the known
+limitations.
+
 ```mermaid
 flowchart LR
     subgraph Browser
@@ -119,6 +124,8 @@ On top of that, we save a plain HTML snapshot for thumbnails:
 - It only fires for `owner`/`editor`. Viewers never send it.
 - On tab close we flush one last time with `keepalive: true`.
 - It's one-directional: Yjs -> snapshot. We never load the doc from that HTML.
+- If two editors save at once it's last-write-wins. Fine, since it's only for
+  thumbnails, the real doc is still the Yjs log.
 
 ### State
 
@@ -161,10 +168,13 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Env vars
 
-| Name                 | Required | Default                  | What it is                           |
-| -------------------- | :------: | ------------------------ | ------------------------------------ |
-| `NEXT_PUBLIC_WS_URL` |    no    | `ws://localhost:8080/ws` | WebSocket base url for live editing. |
-| `NODE_ENV`           |    no    | `development`            | Standard node env.                   |
+| Name                 | Required | Default                    | What it is                                                              |
+| -------------------- | :------: | -------------------------- | ----------------------------------------------------------------------- |
+| `API_BASE_URL`       |    no    | `http://localhost:8080/v1` | Backend url the `/api/*` proxy routes call. Server only, include `/v1`. |
+| `NEXT_PUBLIC_WS_URL` |    no    | `ws://localhost:8080/ws`   | WebSocket base url for live editing. Public, use `wss://` in prod.      |
+
+`API_BASE_URL` is read on the server, so it never reaches the browser. `NEXT_PUBLIC_WS_URL`
+is public by design, since the browser opens the socket itself.
 
 ### Useful commands
 
@@ -194,10 +204,30 @@ directly. It's one extra hop, but it keeps the auth token in an HttpOnly cookie
 (the browser can't see it, which is safer) and keeps the backend url off the
 client.
 
+### The WebSocket token tradeoff
+
+The socket can't use an HttpOnly cookie, so there's a second `ws_token` cookie
+that JavaScript can read. That does undercut the HttpOnly benefit a bit: an XSS
+bug could read it, and a token in a url can end up in server logs. The tidy fix
+is a short-lived, one-use ticket from the backend instead of the long JWT. Not
+done yet, so it's listed as a known limitation.
+
+### Snapshot size
+
+The backend allows up to 1,000,000 characters of content per document. That's a
+lot to store just to draw a small thumbnail, and it's heavy on a small database.
+There's also a browser limit on `keepalive` request bodies (about 64 KB), which a
+big snapshot could brush against. The plan is to send only a short preview, like
+the first few hundred characters.
+
 ### Read only is a UI hint
 
 A viewer's editor is read only, but that's just the UI. The real check is on the
 backend and on the socket. The client is never trusted.
+
+The role is decided when the socket connects, so if it changes mid-session (say a
+viewer gets upgraded, or an editor gets revoked) the open tab keeps the old role
+until it reconnects. We don't push role changes to live sockets yet.
 
 ## Where we got stuck
 
@@ -235,15 +265,23 @@ get committed.
 
 ## Deployment notes
 
-- Set `NEXT_PUBLIC_WS_URL` to your backend's WebSocket url (use `wss://` in prod).
-- The `/api/*` proxy targets `http://localhost:8080`. Point it at the real backend
-  url for production.
+- Set `API_BASE_URL` to the backend url, e.g. `https://api.draftly.byethecarrot.dev/v1`.
+  Include the `/v1` suffix. It's used by the `/api/*` proxy routes.
+- Set `NEXT_PUBLIC_WS_URL` to the backend WebSocket url, e.g.
+  `wss://api.draftly.byethecarrot.dev/ws`. Use `wss://` in prod because the page is https.
 - Deploys fine on Vercel, since the socket is handled by the backend, not Next.
+- Never commit the real `.env`. `.env.example` is the template, the real file is ignored.
 
 ## Known limitations
 
 - The "shared with me" list always shows the role as viewer, we don't fetch the
   real role there yet.
+- Role changes mid-session don't reach an open tab. A revoked or downgraded user
+  keeps their current socket until they reconnect.
+- `ws_token` is readable by JavaScript and travels in the ws url, so it can leak.
+  A short-lived ticket would be better.
+- The autosave snapshot is the full HTML, up to 1,000,000 chars, just for a
+  thumbnail. A short preview would be cheaper and safer.
 - No offline editing. If the socket drops, edits pause until it reconnects.
 - Cursor colors are random per session, so two people can get the same color.
 - No presence list (who's in the doc right now).
@@ -251,6 +289,9 @@ get committed.
 ## Roadmap
 
 - Show the real role in the shared list.
+- React to role changes on open sockets (close or re-role them live).
+- Swap `ws_token` for a short-lived, one-use ticket.
+- Send only a short preview for thumbnails.
 - Better cursor colors (no collisions).
 - Presence avatars in the editor header.
 - Offline support with Yjs persistence.

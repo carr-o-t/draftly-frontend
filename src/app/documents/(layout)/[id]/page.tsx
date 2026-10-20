@@ -1,5 +1,6 @@
 import { DocumentEditor } from '@/components/document-editor';
 import { documentKeys } from '@/features/documents/queries';
+import { backendUrl } from '@/lib/backend';
 import {
   dehydrate,
   HydrationBoundary,
@@ -21,7 +22,7 @@ export default async function DocumentPage({
       const cookieStore = await cookies();
       const token = cookieStore.get('auth_token')?.value;
 
-      const response = await fetch(`http://localhost:8080/v1/documents/${id}`, {
+      const response = await fetch(backendUrl(`/documents/${id}`), {
         headers: {
           Authorization: `Bearer ${token}`,
         },

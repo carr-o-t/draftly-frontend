@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { backendUrl } from '@/lib/backend';
 
 async function authorizedFetch(url: string, options: RequestInit = {}) {
   const cookieStore = await cookies();
@@ -19,9 +20,7 @@ async function authorizedFetch(url: string, options: RequestInit = {}) {
 
 export async function GET() {
   try {
-    const response = await authorizedFetch(
-      `http://localhost:8080/v1/access/requests`
-    );
+    const response = await authorizedFetch(backendUrl(`/access/requests`));
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
